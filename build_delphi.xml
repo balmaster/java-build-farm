@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+
+<project name="delphi">
+
+    <macrodef name="delphi">
+        <attribute name="project" />
+        <attribute name="options" />
+        <attribute name="path" />
+        <sequential>
+            <exec dir="@{path}" failonerror="true" executable="dcc32.exe" osfamily="windows">
+                <arg line="@{project} @{options}" />
+            </exec>
+        </sequential>
+    </macrodef>
+
+</project>

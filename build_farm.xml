@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<project name="build_farm">
+    <property environment="env" />
+    <property name="debuglevel" value="source,lines,vars" />
+    <property name="target" value="1.5" />
+    <property name="source" value="1.5" />
+
+    <taskdef resource="ise/antelope/tasks/antlib.xml" classpath="${BUILD_FARM_HOME}/AntelopeTasks_3.5.3.jar" />
+
+    <typedef resource="antlib.xml">
+        <classpath>
+            <pathelement location="${BUILD_FARM_HOME}/tasks-1.0.0.jar" />
+            <pathelement location="${BUILD_FARM_HOME}/AntelopeTasks_3.5.3.jar" />
+            <pathelement location="${BUILD_FARM_HOME}/eproperties_deps-1.1.2.jar" />
+            <pathelement location="${BUILD_FARM_HOME}/activation-1.1.jar" />
+            <pathelement location="${BUILD_FARM_HOME}/jline-0.9.9.jar" />
+        </classpath>
+    </typedef>
+
+    <macrodef name="get_properties">
+        <sequential>
+            <property file="project.user.properties" />
+            <property file="generated.properties" />
+            <property file="project.properties" />
+        </sequential>
+    </macrodef>
+
+    <macrodef name="delete_with_excludes">
+        <attribute name="dir" />
+        <attribute name="excludes" />
+        <sequential>
+            <local name="excluded_list" />
+            <stringutil string="@{excludes}" property="excluded_list">
+                <replace regex=":" replacement=" " />
+            </stringutil>
+            <echo message="${excluded_list}" />
+            <if>
+                <bool>
+                    <available file="@{dir}" type="dir" />
+                </bool>
+                <delete>
+                    <fileset dir="@{dir}" excludes="${excluded_list}" />
+                </delete>
+                <else>
+                    <echo message="@{dir} not exists" />
+                </else>
+            </if>
+        </sequential>
+    </macrodef>
+
+    <target name="build">
+    </target>
+    <target name="clean">
+    </target>
+    <target name="distribute">
+    </target>
+    <target name="configure">
+    </target>
+    <target name="redeploy">
+    </target>
+
+    <macrodef name="propertycopy">
+        <attribute name="name" />
+        <attribute name="from" />
+        <sequential>
+            <property name="@{name}" value="${@{from}}" />
+        </sequential>
+    </macrodef>
+
+</project>

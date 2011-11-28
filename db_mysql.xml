@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+
+<project name="db_mysql">
+
+  <macrodef name="mysql_run_sql_as_root">
+    <attribute name="path"/>
+    <attribute name="file"/>
+
+    <sequential>
+      <if>
+        <os family="windows"/>
+        <then>
+          <sequential>
+            <echo message="Not implemented yet."/>
+          </sequential>
+        </then>
+        <else>
+          <sequential>
+            <echo message="mysql -u root -p &lt; @{file}"/>
+            <input
+                message="Please enter password:"
+                addproperty="db.password"
+                defaultvalue="q1"/>
+            <exec dir="@{path}" failonerror="true" executable="bash">
+              <arg value="-c"/>
+              <arg value="cat @{file} | mysql -u root -p${db.password}"/>
+          </exec>
+          </sequential>
+        </else>
+      </if>
+    </sequential>
+  </macrodef>
+
+</project>
+

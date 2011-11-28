@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+
+<project name="make">
+
+    <macrodef name="make">
+        <attribute name="project" />
+        <attribute name="target" />
+        <sequential>
+            <exec failonerror="true" executable="make.exe" osfamily="windows">
+                <arg line="@{target} -f@{project}" />
+            </exec>
+            <exec failonerror="true" executable="make" osfamily="unix">
+                <arg line="@{target} -f @{project}" />
+            </exec>
+        </sequential>
+    </macrodef>
+
+</project>

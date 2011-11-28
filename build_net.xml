@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+
+<project name="net">
+
+    <macrodef name="msbuild">
+        <attribute name="project" />
+        <attribute name="target" />
+        <attribute name="config" />
+        <attribute name="platform" />
+        <sequential>
+            <exec failonerror="true"
+                  executable="${env.windir}\Microsoft.NET\Framework\v3.5\MSBuild.exe"
+                  osfamily="windows">
+                <arg line="@{project} /t:@{target} /p:Configuration=@{config};platform='@{platform}' /nologo" />
+            </exec>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="nunit">
+        <attribute name="project" />
+        <attribute name="target" />
+        <attribute name="config" />
+        <attribute name="platform" />
+        <sequential>
+            <if>
+                <equals arg1="@{platform}" arg2="x86" />
+                <then>
+                    <exec failonerror="true"
+                          executable="${nunit_path}nunit-console-x86.exe"
+                          dir="@{project}"
+                          osfamily="windows">
+                        <arg line="@{target} @{config} /nologo /nodots" />
+                    </exec>
+                </then>
+                <else>
+                    <exec failonerror="true"
+                          executable="${nunit_path}nunit-console.exe"
+                          dir="@{project}"
+                          osfamily="windows">
+                        <arg line="@{target} @{config} /nologo /nodots" />
+                    </exec>
+                </else>
+            </if>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="gen_net_component_properties">
+        <sequential>
+            <property file="component.properties" />
+            <if>
+                <equals arg1="${component.version}" arg2="trunk" />
+                <then>
+                    <property name="net.component.version" value="0.0.0.0" />
+                </then>
+                <else>
+                    <property name="net.component.version" value="${component.version}" />
+                </else>
+            </if>
+            <propertyfile file="component.properties" comment="net component">
+                <entry key="component.version" value="${component.version}" />
+                <entry key="net.component.version" value="${net.component.version}" />
+            </propertyfile>
+
+            <!-- .NET component version MUST be in x.x.x.x format -->
+            <!-- try string_x.x.x.x-->
+            <replaceregexp file="component.properties"
+                           match="net.component.version=[\w_]+(\d+\.\d+\.\d+.\d+)"
+                           replace="net.component.version=\1"
+                           byline="true" />
+            <!-- try string_x.x.x-->
+            <replaceregexp file="component.properties"
+                           match="net.component.version=[\w_]+(\d+\.\d+\.\d+)"
+                           replace="net.component.version=\1\.0"
+                           byline="true" />
+            <!-- try string_x.x-->
+            <replaceregexp file="component.properties"
+                           match="net.component.version=[\w_]+(\d+\.\d+)"
+                           replace="net.component.version=\1\.0\.0"
+                           byline="true" />
+        </sequential>
+    </macrodef>
+
+</project>

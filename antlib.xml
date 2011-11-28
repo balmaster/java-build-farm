@@ -1,0 +1,7 @@
+<antlib>
+    <typedef name="or_" classname="org.apache.tools.ant.taskdefs.condition.Or"/>
+    <typedef name="and_" classname="org.apache.tools.ant.taskdefs.condition.And"/>
+    <typedef name="contains_" classname="ise.antelope.tasks.condition.Contains"/>
+    <taskdef name="read_password" classname="build_farm.password.ReadPasswordTask"/>
+    <taskdef name="eval_properties" classname="build_farm.property.EvalPropertiesTask"/>
+</antlib>

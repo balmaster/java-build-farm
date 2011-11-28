@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<project name="vcs_subversion">
+
+    <macrodef name="svn_call">
+        <attribute name="src.path" />
+        <attribute name="dst.path" />
+        <attribute name="command" />
+        <sequential>
+            <exec failonerror="true" executable="svn" osfamily="windows">
+                <arg line="@{command} @{src.path} @{dst.path}" />
+            </exec>
+            <exec failonerror="true" executable="svn" osfamily="unix">
+                <arg line="@{command} @{src.path} @{dst.path}" />
+            </exec>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="svn_configure">
+    	<sequential>
+    	        <!-- get branch name -->
+        <delete file="info.tmp" />
+        <exec command="svn info --xml" output="info.tmp" />
+        <xmlproperty file="info.tmp" semanticAttributes="true" includeSemanticAttribute="true" />
+        <!--<delete file="info.tmp" />-->
+
+        <!-- project_svn_path MUST be set -->
+        <fail unless="project_svn_path" status="1" message="project_svn_path MUST be set in project.properties" />
+
+        <stringutil string="${info.entry.repository.root}" property="repository_root_len">
+            <length />
+        </stringutil>
+        <stringutil string="${info.entry.url}" property="url_without_root">
+            <substring beginindex="${repository_root_len}" />
+        </stringutil>
+        <stringutil string="${project_svn_path}" property="project_svn_path_len">
+            <length />
+        </stringutil>
+        <stringutil string="${url_without_root}" property="version">
+            <substring beginindex="${project_svn_path_len}" />
+            <replace regex="\/" replacement="" />
+        </stringutil>
+
+        <propertyfile file="generated.properties">
+            <entry key="project_version" value="${version}" />
+            <entry key="project_revision" value="${info.entry.revision}" />
+            <entry key="project_root" value="${info.entry.repository.root}" />
+        </propertyfile>
+
+    	</sequential>
+    </macrodef>
+
+</project>
