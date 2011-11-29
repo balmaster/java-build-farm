@@ -9,6 +9,7 @@
 
     <typedef resource="antlib.xml">
         <classpath>
+            <pathelement location="${BUILD_FARM_HOME}" />
             <pathelement location="${BUILD_FARM_HOME}/tasks-1.0.0.jar" />
             <pathelement location="${BUILD_FARM_HOME}/AntelopeTasks_3.5.3.jar" />
             <pathelement location="${BUILD_FARM_HOME}/eproperties_deps-1.1.2.jar" />
