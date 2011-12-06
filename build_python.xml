@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+
+<project name="python">
+
+    <macrodef name="python_compile">
+        <attribute name="target" />
+        <sequential>
+		<exec executable="python.exe" osfamily="windows" failonerror="true" searchpath="true">
+			<arg line="-m compileall @{target}"/>
+		</exec>
+		<exec executable="python" osfamily="unix" failonerror="true">
+			<arg line="-m compileall @{target}"/>
+		</exec>
+        </sequential>
+    </macrodef>
+
+	
+        <property name="virtualenv_dir" value="${basedir}/env"/>
+	<if> 
+    		<bool> 	
+      			<os family="windows"/>
+    		</bool>
+    		
+    		<property name="virtualenv_dir_bin" value="${virtualenv_dir}/Scripts"/>
+    		<property name="virtualenv.PYTHONPATH" value="${virtualenv_dir}/lib/site-packages:${env.PYTHONPATH}"/>
+		<property name="virtualenv.PYTHON_EGG_CACHE" value="${virtualenv_dir}/.python-eggs:${env.PYTHON_EGG_CACHE}"/>
+		<property name="virtualenv_pip" value="${virtualenv_dir_bin}/pip.exe"/>
+
+    		<else>
+      			<property name="virtualenv_dir_bin" value="${virtualenv_dir}/bin"/>
+	    		<property name="virtualenv.PATH" value="${virtualenv_dir}/lib/python${python_version}/site-packages:${env.PYTHONPATH}"/>
+			<property name="virtualenv.PYTHON_EGG_CACHE" value="${virtualenv_dir}/.python-eggs:${env.PYTHON_EGG_CACHE}"/>
+			<property name="virtualenv_pip" value="${virtualenv_dir_bin}/pip"/>
+    		</else>
+  	</if>
+
+	<macrodef name="virtualenv_create">
+	        <sequential>
+    			<if> 
+      			<bool>
+        			<not>
+          				<available file="${virtualenv_bin}/activate" type="file"/>
+        			</not>
+      			</bool>
+        		<sequential>
+          			<echo message="Initialize virtual environment for this project."/>
+          			<exec executable="virtualenv" failonerror="true">
+            				<arg line="${virtualenv_dir}"/>
+          			</exec>
+
+          			<echo message="Install PIP into the virtual environment."/>
+          			<if>
+            				<bool>
+              					<equals arg1="${antfarm_quiet}" arg2="True"/>
+            				</bool>
+              				<exec executable="${virtualenv_dir_bin}/easy_install" failonerror="true">
+                				<arg line="-q pip"/>
+                				<env key="PYTHONPATH" value="${virtualenv.PYTHONPATH}"/>
+              				</exec>
+            				<else>
+              					<exec executable="${virtualenv_dir_bin}/easy_install" failonerror="true">
+					                <arg line="pip"/>
+	                				<env key="PYTHONPATH" value="${virtualenv.PYTHONPATH}"/>
+              					</exec>
+            				</else>
+          			</if>
+				<virtualenv_update/>
+        		</sequential>
+    			</if>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="virtualenv_update">
+	        <sequential>
+    			<if> 
+      				<bool>
+        				<not>
+     						<available file="${virtualenv_pip}" type="file"/>
+        				</not>
+      				</bool>
+      				<fail message="Please, initialize virtual environment first."/>
+      				<else>
+        				<sequential>
+          					<echo message="Source the virtual environment."/>
+						<echo message="Update dependencies in the virtual environment. Please wait..."/>
+          					<if>
+            						<bool>
+              							<equals arg1="${antfarm_quiet}" arg2="True"/>
+            						</bool>
+						        <exec executable="${virtualenv_pip}" failonerror="true">
+                						<arg line="install -q -E ${virtualenv_dir} -r ./deps.txt"/>
+                                				<env key="PYTHONPATH" value="${virtualenv.PYTHONPATH}"/>
+						        </exec>
+						        <else>
+							        <exec executable="${virtualenv_pip}" failonerror="true">
+        	        						<arg line="install -E ${virtualenv_dir} -r ./deps.txt"/>
+				               				<env key="PYTHONPATH" value="${virtualenv.PYTHONPATH}"/>
+							        </exec>
+            						</else>
+          					</if>
+          					<echo message="Source environment with: . ${virtualenv_dir_bin}/activate"/>
+          					<echo message="Use deactivate to disable virtual environment."/>
+        				</sequential>
+      				</else>
+    			</if>
+	        </sequential>
+	</macrodef>
+
+	<target name="virtualenv_create">
+		<virtualenv_create/>
+	</target>
+
+  	<target name="virtualenv_update">
+  		<virtualenv_update/>
+  	</target>
+
+  	<target name="epydoc">
+	    	<echo message="Generate project documentation"/>
+	    	<delete dir="${basedir}/epydoc" includeemptydirs="true" quiet="yes"/>
+    		<exec dir="${basedir}/src" failonerror="true" executable="epydoc" error="/dev/null" osfamily="unix">
+      			<arg line="--quiet --html -o ${basedir}/epydoc --graph all **/*.py"/>
+                	<env key="PYTHONPATH" value="${virtualenv.PYTHONPATH}"/>
+    		</exec>
+  	</target>
+
+</project>
