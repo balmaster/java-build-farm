@@ -35,6 +35,7 @@
   	</if>
 
 	<macrodef name="virtualenv_create">
+		<attribute name="depfile" />
 	        <sequential>
     			<if> 
       			<bool>
@@ -64,13 +65,14 @@
               					</exec>
             				</else>
           			</if>
-				<virtualenv_update/>
+				<virtualenv_update depfile="@{depfile}"/>
         		</sequential>
     			</if>
 		</sequential>
 	</macrodef>
 
 	<macrodef name="virtualenv_update">
+		<attribute name="depfile" />
 	        <sequential>
     			<if> 
       				<bool>
@@ -88,12 +90,12 @@
               							<equals arg1="${antfarm_quiet}" arg2="True"/>
             						</bool>
 						        <exec executable="${virtualenv_pip}" failonerror="true">
-                						<arg line="install -q -E ${virtualenv_dir} -r ./deps.txt"/>
+                						<arg line="install -q -E ${virtualenv_dir} -r @{depfile}"/>
                                 				<env key="PYTHONPATH" value="${virtualenv.PYTHONPATH}"/>
 						        </exec>
 						        <else>
 							        <exec executable="${virtualenv_pip}" failonerror="true">
-        	        						<arg line="install -E ${virtualenv_dir} -r ./deps.txt"/>
+        	        						<arg line="install -E ${virtualenv_dir} -r @{depfile}"/>
 				               				<env key="PYTHONPATH" value="${virtualenv.PYTHONPATH}"/>
 							        </exec>
             						</else>
@@ -107,11 +109,11 @@
 	</macrodef>
 
 	<target name="virtualenv_create">
-		<virtualenv_create/>
+		<virtualenv_create depfile="deps.txt"/>
 	</target>
 
   	<target name="virtualenv_update">
-  		<virtualenv_update/>
+  		<virtualenv_update depfile="deps.txt"/>
   	</target>
 
   	<target name="epydoc">
