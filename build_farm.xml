@@ -20,12 +20,30 @@
 
     <macrodef name="get_properties">
         <sequential>
-            <property file="project.user.properties" />
-            <property file="generated.properties" />
-            <property file="project.properties" />
+        	<mkdir dir="tmp/properties"/>
+        	<native2ascii encoding="utf8" src="." dest="tmp/properties" includes="*.properties" />
+        	<eval_properties srcfile="tmp/properties/project.properties" dstfile="tmp/properties/active.properties">
+        		<setproperty name="basedir" value="${basedir}" />
+        	</eval_properties>
+        	<property file="tmp/properties/active.properties" />
         </sequential>
     </macrodef>
 
+	<macrodef name="copy_with_replace">
+		<attribute name="target" />
+		<attribute name="params" />
+		<element name="source"/>
+		<sequential>
+			<copy todir="@{target}" filtering="true" encoding="utf-8" overwrite="true">
+				<filterset begintoken="$${" endtoken="}">
+					<filtersfile file="@{params}" />
+				</filterset>
+				<source/>
+			</copy>
+		</sequential>
+	</macrodef>
+
+	
     <macrodef name="delete_with_excludes">
         <attribute name="dir" />
         <attribute name="excludes" />

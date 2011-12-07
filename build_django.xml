@@ -1,50 +1,88 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
-
 <project name="django">
-    <import file="${BUILD_FARM_HOME}/build_python.xml"/>
+	<import file="${BUILD_FARM_HOME}/build_python.xml" />
 
-    <macrodef name="django_build">
-        <attribute name="target" />
-        <element name="src" optional="true"/>
-        <element name="static" optional="true"/>
-        <sequential>
-        	<echo message="Install project into target directory"/>
-    		<mkdir dir="@{target}"/>
-    		<copy todir="@{target}" encoding="utf-8">
-    			<src/>
-	      		<fileset dir=".">
-			        <include name="src/**"/>
-			        <exclude name="src/**/static/**"/>
-			        <exclude name="src/media/"/>
-			        <exclude name="src/**/*.sh"/>
-			        <exclude name="src/**/*.bat"/>
-			        <exclude name="src/**/*.cmd"/>
-			        <exclude name="src/**/*.po"/>
-			        <exclude name="src/**/*.pyc"/>
-			        <include name="deps.txt"/>
-		      </fileset>
-		</copy>
-    	
-	    	<mkdir dir="@{target}/static"/>
-    		<echo message="Move collected static files into static directory"/>
-    		<copy todir="@{target}/static" encoding="utf-8">
-      			<static/>
-		        <fileset dir="src/search/static">
-			        <include name="**/**"/>
-		      	</fileset>
-		</copy>
+	<macrodef name="django_configure">
+		<attribute name="target"/>
+		<sequential>
+			<echo message="Create directories..." />
+			<mkdir dir="@{target}/site" />
+			<mkdir dir="@{target}/logs" />
+			<mkdir dir="@{target}/database" />
+			<echo message="Create files from templates..." />
 
-		<python_compile target="@{target}"/>
+			<copy_with_replace target="@{target}/site" params="tmp/properties/active.properties">
+				<source>
+					<fileset dir="${BUILD_FARM_HOME}/template/django">
+						<include name="**/**"/>
+					</fileset>
+				</source>
+			</copy_with_replace>
+			<if>
+			<bool>
+				<available file="template/django" type="file"/>
+			</bool>
+			<copy_with_replace target="@{target}/site" params="tmp/properties/active.properties">
+				<source>
+					<fileset dir="template/django">
+						<include name="**/**"/>
+					</fileset>
+				</source>
+			</copy_with_replace>
+			</if>
 
-    		<delete>
-	      		<fileset dir="@{target}">
-        			<include name="src/**/*.py"/>
-	        		<exclude name="src/settings.py"/>
-       				<exclude name="src/**/migrations/*.py"/>
-        			<exclude name="src/**/commands/*.py"/>
-	      		</fileset>
-    		</delete>
-        </sequential>
-    </macrodef>
+			<copy_with_replace target="@{target}" params="tmp/properties/active.properties">
+				<source>
+					<fileset dir="template">
+						<includesfile name="src/settings.py"/>
+					</fileset>
+				</source>
+			</copy_with_replace>
+		</sequential>
+	</macrodef>
+	
+	<macrodef name="django_build">
+		<attribute name="target" />
+		<element name="src" optional="true" />
+		<element name="static" optional="true" />
+		<sequential>
+			<echo message="Install project into target directory" />
+			<mkdir dir="@{target}" />
+			<copy todir="@{target}" encoding="utf-8">
+				<src />
+				<fileset dir=".">
+					<include name="src/**" />
+					<exclude name="src/**/static/**" />
+					<exclude name="src/media/" />
+					<exclude name="src/**/*.sh" />
+					<exclude name="src/**/*.bat" />
+					<exclude name="src/**/*.cmd" />
+					<exclude name="src/**/*.po" />
+					<exclude name="src/**/*.pyc" />
+					<include name="deps.txt" />
+				</fileset>
+			</copy>
+
+			<mkdir dir="@{target}/static" />
+			<echo message="Move collected static files into static directory" />
+			<copy todir="@{target}/static" encoding="utf-8">
+				<static />
+				<fileset dir="src/search/static">
+					<include name="**/**" />
+				</fileset>
+			</copy>
+
+			<python_compile target="@{target}" />
+
+			<delete>
+				<fileset dir="@{target}">
+					<include name="src/**/*.py" />
+					<exclude name="src/settings.py" />
+					<exclude name="src/**/migrations/*.py" />
+					<exclude name="src/**/commands/*.py" />
+				</fileset>
+			</delete>
+		</sequential>
+	</macrodef>
 
 </project>
