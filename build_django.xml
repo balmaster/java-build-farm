@@ -3,46 +3,49 @@
 	<import file="${BUILD_FARM_HOME}/build_python.xml" />
 
 	<macrodef name="django_configure">
-		<attribute name="target"/>
+		<attribute name="target" default="."/>
 		<sequential>
 			<echo message="Create directories..." />
-			<mkdir dir="@{target}/site" />
+			<mkdir dir="@{target}/django" />
 			<mkdir dir="@{target}/logs" />
-			<mkdir dir="@{target}/database" />
 			<echo message="Create files from templates..." />
 
-			<copy_with_replace target="@{target}/site" params="tmp/properties/active.properties">
+			<copy_with_replace target="@{target}" params="tmp/properties/active.properties">
 				<source>
-					<fileset dir="${BUILD_FARM_HOME}/template/django">
-						<include name="**/**"/>
+					<fileset dir="${BUILD_FARM_HOME}/template">
+						<include name="django/**/**"/>
 					</fileset>
 				</source>
 			</copy_with_replace>
-			<if>
-			<bool>
-				<available file="template/django" type="file"/>
-			</bool>
-			<copy_with_replace target="@{target}/site" params="tmp/properties/active.properties">
+			<copy_with_replace target="@{target}" params="tmp/properties/active.properties">
 				<source>
-					<fileset dir="template/django">
-						<include name="**/**"/>
+					<fileset dir="template">
+						<include name="django/**/**"/>
 					</fileset>
 				</source>
 			</copy_with_replace>
-			</if>
 
 			<copy_with_replace target="@{target}" params="tmp/properties/active.properties">
 				<source>
 					<fileset dir="template">
-						<includesfile name="src/settings.py"/>
+						<include name="src/settings.py"/>
 					</fileset>
 				</source>
 			</copy_with_replace>
 		</sequential>
 	</macrodef>
+
+	<macrodef name="django_clean">
+		<attribute name="target" default="."/>
+		<sequential>
+			<delete dir="@{target}/static"/>
+			<delete dir="@{target}/django"/>
+		</sequential>
+	</macrodef>
+
 	
 	<macrodef name="django_build">
-		<attribute name="target" />
+		<attribute name="target" default="build"/>
 		<element name="src" optional="true" />
 		<element name="static" optional="true" />
 		<sequential>
@@ -72,7 +75,7 @@
 				</fileset>
 			</copy>
 
-			<python_compile target="@{target}" />
+			<python_compile target="@{target}/src" />
 
 			<delete>
 				<fileset dir="@{target}">

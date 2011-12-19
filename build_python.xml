@@ -14,6 +14,12 @@
         </sequential>
     </macrodef>
 
+    <macrodef name="python_configure">
+        <attribute name="target" default="."/>
+        <sequential>
+        	<virtualenv_create/>
+        </sequential>
+    </macrodef>
 	
         <property name="virtualenv_dir" value="${basedir}/env"/>
 	<if> 
@@ -35,76 +41,30 @@
   	</if>
 
 	<macrodef name="virtualenv_create">
-		<attribute name="depfile" />
+		<attribute name="depfile" default="deps.txt"/>
 	        <sequential>
-    			<if> 
-      			<bool>
-        			<not>
-          				<available file="${virtualenv_bin}/activate" type="file"/>
-        			</not>
-      			</bool>
-        		<sequential>
-          			<echo message="Initialize virtual environment for this project."/>
-          			<exec executable="virtualenv" failonerror="true">
-            				<arg line="${virtualenv_dir}"/>
-          			</exec>
+          		<echo message="Initialize virtual environment for this project."/>
+          		<exec executable="virtualenv" failonerror="true">
+            			<arg line="${virtualenv_dir}"/>
+          		</exec>
 
-          			<echo message="Install PIP into the virtual environment."/>
-          			<if>
-            				<bool>
-              					<equals arg1="${antfarm_quiet}" arg2="True"/>
-            				</bool>
-              				<exec executable="${virtualenv_dir_bin}/easy_install" failonerror="true">
-                				<arg line="-q pip"/>
-                				<env key="PYTHONPATH" value="${virtualenv.PYTHONPATH}"/>
-              				</exec>
-            				<else>
-              					<exec executable="${virtualenv_dir_bin}/easy_install" failonerror="true">
-					                <arg line="pip"/>
-	                				<env key="PYTHONPATH" value="${virtualenv.PYTHONPATH}"/>
-              					</exec>
-            				</else>
-          			</if>
-				<virtualenv_update depfile="@{depfile}"/>
-        		</sequential>
-    			</if>
+          		<echo message="Install PIP into the virtual environment."/>
+         		<exec executable="${virtualenv_dir_bin}/easy_install" failonerror="true">
+                		<arg line=" pip"/>
+                		<env key="PYTHONPATH" value="${virtualenv.PYTHONPATH}"/>
+              		</exec>
+			<virtualenv_update depfile="@{depfile}"/>
 		</sequential>
 	</macrodef>
 
 	<macrodef name="virtualenv_update">
-		<attribute name="depfile" />
+		<attribute name="depfile" default="deps.txt"/>
 	        <sequential>
-    			<if> 
-      				<bool>
-        				<not>
-     						<available file="${virtualenv_pip}" type="file"/>
-        				</not>
-      				</bool>
-      				<fail message="Please, initialize virtual environment first."/>
-      				<else>
-        				<sequential>
-          					<echo message="Source the virtual environment."/>
-						<echo message="Update dependencies in the virtual environment. Please wait..."/>
-          					<if>
-            						<bool>
-              							<equals arg1="${antfarm_quiet}" arg2="True"/>
-            						</bool>
-						        <exec executable="${virtualenv_pip}" failonerror="true">
-                						<arg line="install -q -E ${virtualenv_dir} -r @{depfile}"/>
-                                				<env key="PYTHONPATH" value="${virtualenv.PYTHONPATH}"/>
-						        </exec>
-						        <else>
-							        <exec executable="${virtualenv_pip}" failonerror="true">
-        	        						<arg line="install -E ${virtualenv_dir} -r @{depfile}"/>
-				               				<env key="PYTHONPATH" value="${virtualenv.PYTHONPATH}"/>
-							        </exec>
-            						</else>
-          					</if>
-          					<echo message="Source environment with: . ${virtualenv_dir_bin}/activate"/>
-          					<echo message="Use deactivate to disable virtual environment."/>
-        				</sequential>
-      				</else>
-    			</if>
+			<echo message="Update dependencies in the virtual environment. Please wait..."/>
+			<exec executable="${virtualenv_pip}" failonerror="true">
+                		<arg line="install -E ${virtualenv_dir} -r @{depfile}"/>
+                                <env key="PYTHONPATH" value="${virtualenv.PYTHONPATH}"/>
+		        </exec>
 	        </sequential>
 	</macrodef>
 
