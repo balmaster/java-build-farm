@@ -5,12 +5,30 @@
     <macrodef name="python_compile">
         <attribute name="target" />
         <sequential>
+
+        		<!--
+    <echo message="Compile i18n resources"/>
+    <exec executable="django-admin.py" dir="${basedir}/src" failonerror="true">
+      <arg value="compilemessages"/>
+    </exec>
+    //--> 
 		<exec executable="python.exe" osfamily="windows" failonerror="true" searchpath="true">
 			<arg line="-m compileall @{target}"/>
 		</exec>
 		<exec executable="python" osfamily="unix" failonerror="true">
 			<arg line="-m compileall @{target}"/>
 		</exec>
+        </sequential>
+    </macrodef>
+    
+    <macrodef name="python_clean">
+        <attribute name="target" />
+        <sequential>
+		<delete>
+			<fileset dir="@{target}" defaultexcludes="no">
+				<exclude name="**/*.pyc" />
+			</fileset>
+		</delete>
         </sequential>
     </macrodef>
 
