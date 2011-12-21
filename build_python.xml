@@ -34,8 +34,14 @@
 
     <macrodef name="python_configure">
         <attribute name="target" default="."/>
+        <attribute name="updatevirtualenv" default="true"/>
         <sequential>
-        	<virtualenv_create/>
+		<if>
+		<bool>
+			<istrue value="@{updatevirtualenv}"/>
+		</bool>        	
+	        	<virtualenv_create/>
+        	</if>
         </sequential>
     </macrodef>
 	
