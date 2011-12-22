@@ -5,19 +5,11 @@
     <macrodef name="python_compile">
         <attribute name="target" />
         <sequential>
-
-        		<!--
-    <echo message="Compile i18n resources"/>
-    <exec executable="django-admin.py" dir="${basedir}/src" failonerror="true">
-      <arg value="compilemessages"/>
-    </exec>
-    //--> 
-		<exec executable="python.exe" osfamily="windows" failonerror="true" searchpath="true">
-			<arg line="-m compileall @{target}"/>
-		</exec>
-		<exec executable="python" osfamily="unix" failonerror="true">
-			<arg line="-m compileall @{target}"/>
-		</exec>
+    		<python>
+    			<args>
+	    			<arg line="-m compileall @{target}"/>
+    			</args>
+    		</python>
         </sequential>
     </macrodef>
     
@@ -108,5 +100,17 @@
                 	<env key="PYTHONPATH" value="${virtualenv.PYTHONPATH}"/>
     		</exec>
   	</target>
+
+  	<macrodef name="python">
+  		<attribute name="file" default=""/>
+  		<attribute name="dir" default="${basedir}"/>
+		<element name="args"/>
+		<sequential>
+		<exec executable="python" failonerror="true" searchpath="true">
+			<args/>
+			<env key="PYTHONPATH" value="${virtualenv.PYTHONPATH}"/>
+		</exec>
+		</sequential>
+  	</macrodef>
 
 </project>

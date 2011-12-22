@@ -64,7 +64,15 @@
 					<exclude name="src/**/*.pyc" />
 					<include name="deps.txt" />
 				</fileset>
+
 			</copy>
+
+        		<!--
+    <echo message="Compile i18n resources"/>
+    <exec executable="django-admin.py" dir="${basedir}/src" failonerror="true">
+      <arg value="compilemessages"/>
+    </exec>
+    //--> 
 
 			<mkdir dir="@{target}/static" />
 			<echo message="Move collected static files into static directory" />
