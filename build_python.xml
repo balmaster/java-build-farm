@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 
 <project name="python">
+    <property environment="env" />
 
     <macrodef name="python_compile">
         <attribute name="target" />
@@ -37,21 +38,23 @@
         </sequential>
     </macrodef>
 	
-        <property name="virtualenv_dir" value="${basedir}/env"/>
 	<if> 
     		<bool> 	
       			<os family="windows"/>
     		</bool>
-    		
-    		<property name="virtualenv_dir_bin" value="${virtualenv_dir}/Scripts"/>
-    		<property name="virtualenv.PYTHONPATH" value="${virtualenv_dir}/lib/site-packages:${env.PYTHONPATH}"/>
-		<property name="virtualenv.PYTHON_EGG_CACHE" value="${virtualenv_dir}/.python-eggs:${env.PYTHON_EGG_CACHE}"/>
-		<property name="virtualenv_pip" value="${virtualenv_dir_bin}/pip.exe"/>
+	        <property name="virtualenv_dir" value="${basedir}\env"/>
+    		<property name="virtualenv_dir_bin" value="${virtualenv_dir}\Scripts"/>
+    		<property name="virtualenv.PYTHONPATH" value="${virtualenv_dir}\lib\site-packages:${env.PYTHONPATH}"/>
+		<property name="virtualenv.PYTHON_EGG_CACHE" value="${virtualenv_dir}\.python-eggs:${env.PYTHON_EGG_CACHE}"/>
+		<property name="virtualenv.PATH" value="${virtualenv_dir_bin};${env.PATH};${env.Path}"/>
+		<property name="virtualenv_pip" value="${virtualenv_dir_bin}\pip.exe"/>
 
     		<else>
+    		        <property name="virtualenv_dir" value="${basedir}/env"/>
       			<property name="virtualenv_dir_bin" value="${virtualenv_dir}/bin"/>
-	    		<property name="virtualenv.PATH" value="${virtualenv_dir}/lib/python${python_version}/site-packages:${env.PYTHONPATH}"/>
+	    		<property name="virtualenv.PYTHONPATH" value="${virtualenv_dir}/lib/python${python_version}/site-packages:${env.PYTHONPATH}"/>
 			<property name="virtualenv.PYTHON_EGG_CACHE" value="${virtualenv_dir}/.python-eggs:${env.PYTHON_EGG_CACHE}"/>
+			<property name="virtualenv.PATH" value="${virtualenv_dir_bin}:${env.PATH}"/>
 			<property name="virtualenv_pip" value="${virtualenv_dir_bin}/pip"/>
     		</else>
   	</if>
@@ -102,13 +105,16 @@
   	</target>
 
   	<macrodef name="python">
-  		<attribute name="file" default=""/>
   		<attribute name="dir" default="${basedir}"/>
+  		<attribute name="output" default=""/>
 		<element name="args"/>
 		<sequential>
-		<exec executable="python" failonerror="true" searchpath="true">
+		<echo message="${virtualenv.PYTHONPATH}"/>
+		<exec executable="${virtualenv_dir_bin}/python" failonerror="true" searchpath="true" dir="@{dir}" output="@{output}">
 			<args/>
 			<env key="PYTHONPATH" value="${virtualenv.PYTHONPATH}"/>
+			<env key="VIRTUAL_ENV" value="${virtualenv_dir}"/>
+			<env key="PATH" path="${virtualenv.PATH}"/>
 		</exec>
 		</sequential>
   	</macrodef>
