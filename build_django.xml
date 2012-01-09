@@ -96,4 +96,15 @@
 		</sequential>
 	</macrodef>
 
+	<macrodef name="django_manage">
+		<element name="DjangoManageArgs"/>
+		<sequential>
+			<python dir="src">
+				<args>
+					<arg value="manage.py"/>	
+					<DjangoManageArgs/>
+				</args>
+			</python>
+		</sequential>
+	</macrodef>
 </project>
