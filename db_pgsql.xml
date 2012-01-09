@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+
+<project name="db_pgsql">
+
+	<macrodef name="db_pgsql_create_database">
+		<attribute name="host"/>
+		<attribute name="port" />
+		<attribute name="user"/>
+		<attribute name="database"/>
+		<sequential>
+            		<echo message="createdb --host @{host} --port @{port} --username @{user} @{database}"/>
+            		<exec failonerror="true" executable="createdb">
+              			<arg line="--host @{host} --port @{port} --username @{user} @{database}"/>
+          		</exec>
+        	</sequential>
+	</macrodef>
+
+
+	<macrodef name="db_pgsql_drop_database">
+		<attribute name="host"/>
+		<attribute name="port" />
+		<attribute name="user"/>
+		<attribute name="database"/>
+		<sequential>
+            		<echo message="dropdb --host @{host} --port @{port} --username @{user} @{database}"/>
+            		<exec failonerror="true" executable="dropdb">
+              			<arg line="--host @{host} --port @{port} --username @{user} @{database}"/>
+          		</exec>
+        	</sequential>
+	</macrodef>
+
+	<macrodef name="psql">
+		<attribute name="host"/>
+		<attribute name="port" />
+		<attribute name="user"/>
+		<attribute name="database"/>
+		<attribute name="file"/>
+		<element name="args"/>
+		<sequential>
+            		<exec failonerror="true" executable="psql">
+	            		<arg value="--echo-all"/>
+              			<arg value="--host"/><arg value="@{host}"/>
+              			<arg value="--port"/><arg value="@{port}"/>
+              			<arg value="--username"/><arg value="@{user}"/>
+              			<arg value="--file"/><arg value="@{file}"/>
+              			<args/>
+              			<arg value="@{database}"/>
+          		</exec>
+        	</sequential>
+	</macrodef>
+
+</project>
+
