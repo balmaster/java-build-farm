@@ -6,6 +6,7 @@
     <macrodef name="python_compile">
         <attribute name="target" />
         <sequential>
+        	<echo message="python compile @{target}"/>
     		<python>
     			<args>
 	    			<arg line="-m compileall @{target}"/>
@@ -19,7 +20,7 @@
         <sequential>
 		<delete>
 			<fileset dir="@{target}" defaultexcludes="no">
-				<exclude name="**/*.pyc" />
+				<include name="**/*.pyc" />
 			</fileset>
 		</delete>
         </sequential>
