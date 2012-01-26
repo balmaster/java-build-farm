@@ -84,7 +84,6 @@
 			</copy>
 
 			<python_compile target="@{target}/src" />
-			<!--
 			<delete>
 				<fileset dir="@{target}">
 					<include name="src/**/*.py" />
@@ -93,7 +92,6 @@
 					<exclude name="src/**/commands/*.py" />
 				</fileset>
 			</delete>
-			-->
 		</sequential>
 	</macrodef>
 
