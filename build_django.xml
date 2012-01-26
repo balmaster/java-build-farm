@@ -100,7 +100,7 @@
 		<sequential>
 			<python dir="src">
 				<args>
-					<arg value="manage.py"/>	
+					<arg value="manage.pyc"/>	
 					<DjangoManageArgs/>
 				</args>
 			</python>
