@@ -98,9 +98,20 @@
 	<macrodef name="django_manage">
 		<element name="DjangoManageArgs"/>
 		<sequential>
+			<local name="manage"/>
+			<if>
+			<bool>
+				<available file="src/manage.pyc"/>	
+			</bool>
+				<property name="manage" value="manage.pyc"/>
+			<else>
+				<property name="manage" value="manage.py"/>
+			</else>
+			</if>
+
 			<python dir="src">
 				<args>
-					<arg value="manage.pyc"/>	
+					<arg value="${manage}"/>	
 					<DjangoManageArgs/>
 				</args>
 			</python>
