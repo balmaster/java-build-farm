@@ -78,9 +78,6 @@
 			<echo message="Move collected static files into static directory" />
 			<copy todir="@{target}/static" encoding="utf-8">
 				<static />
-				<fileset dir="src/search/static">
-					<include name="**/**" />
-				</fileset>
 			</copy>
 
 			<python_compile target="@{target}/src" />
