@@ -122,7 +122,7 @@
 			<env key="PATH" path="${virtualenv.PATH}"/>
 		</exec>
 		<else>
-		<exec executable="${virtualenv_dir_bin}/python" failonerror="true" searchpath="true" dir="@{dir}" output="@{output}">
+		<exec executable="${virtualenv_dir_bin}/python" failonerror="true" searchpath="true" dir="@{dir}" output="@{output}" error="python_error">
 			<args/>
 			<env key="PYTHONPATH" value="${virtualenv.PYTHONPATH}"/>
 			<env key="VIRTUAL_ENV" value="${virtualenv_dir}"/>
