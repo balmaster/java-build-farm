@@ -2,34 +2,70 @@
 
 <project name="db_mysql">
 
-  <macrodef name="mysql_run_sql_as_root">
-    <attribute name="path"/>
-    <attribute name="file"/>
+	<macrodef name="db_mysql_create_database">
+		<attribute name="host" />
+		<attribute name="port" />
+		<attribute name="user" />
+		<attribute name="password" default="" />
+		<attribute name="database" />
+		<sequential>
+			<local name="cmd" />
+			<property name="cmd" value="--default-character-set=utf8 --host=@{host} --port=@{port} --user=@{user} --password=@{password} create @{database}" />
+			<echo message="mysqladmin ${cmd}" />
+			<exec failonerror="true" executable="mysqladmin">
+				<arg line="${cmd}" />
+			</exec>
+		</sequential>
+	</macrodef>
 
-    <sequential>
-      <if>
-        <os family="windows"/>
-        <then>
-          <sequential>
-            <echo message="Not implemented yet."/>
-          </sequential>
-        </then>
-        <else>
-          <sequential>
-            <echo message="mysql -u root -p &lt; @{file}"/>
-            <input
-                message="Please enter password:"
-                addproperty="db.password"
-                defaultvalue="q1"/>
-            <exec dir="@{path}" failonerror="true" executable="bash">
-              <arg value="-c"/>
-              <arg value="cat @{file} | mysql -u root -p${db.password}"/>
-          </exec>
-          </sequential>
-        </else>
-      </if>
-    </sequential>
-  </macrodef>
+
+	<macrodef name="db_mysql_drop_database">
+		<attribute name="host" />
+		<attribute name="port" />
+		<attribute name="user" />
+		<attribute name="password" default="" />
+		<attribute name="database" />
+		<sequential>
+			<local name="cmd" />
+			<property name="cmd" value="--force --default-character-set=utf8 --host=@{host} --port=@{port} --user=@{user} --password=@{password} drop @{database}" />
+			<echo message="mysqladmin ${cmd}" />
+			<exec failonerror="true" executable="mysqladmin">
+				<arg line="${cmd}" />
+			</exec>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="mysql">
+		<attribute name="host" />
+		<attribute name="port" />
+		<attribute name="user" />
+		<attribute name="password" default="" />
+		<attribute name="database" />
+		<attribute name="file" />
+		<sequential>
+			<local name="cmd" />
+			<property name="cmd" value="--default-character-set=utf8 --host=@{host} --port=@{port} --user=@{user} --password=@{password}  @{database}" />
+			<echo message="mysql ${cmd}" />
+			<exec failonerror="true" executable="mysql" input="@{file}">
+				<arg line="${cmd}"/>
+			</exec>
+		</sequential>
+	</macrodef>
+	
+	<macrodef name="mysql_commands">
+		<attribute name="host" />
+		<attribute name="port" />
+		<attribute name="user" />
+		<attribute name="password" default="" />
+		<attribute name="database" />
+		<element name="commands" />
+		<sequential>
+			<concat destfile="tmp/mysql_commands.sql" append="false">
+				<commands/>	 			
+			</concat>
+			<mysql host="@{host}" port="@{port}" user="@{user}" password="@{password}" database="@{database}" file="tmp/mysql_commands.sql"/>
+		</sequential>
+	</macrodef>
 
 </project>
 
