@@ -28,7 +28,7 @@
 			<copy_with_replace target="@{target}" params="tmp/properties/active.properties">
 				<source>
 					<fileset dir="template">
-						<include name="src/settings.py"/>
+						<include name="src/**/settings.py"/>
 					</fileset>
 				</source>
 			</copy_with_replace>
@@ -98,7 +98,7 @@
 			<local name="manage"/>
 			<if>
 			<bool>
-				<available file="src/manage.pyc"/>	
+				<available file="manage.pyc"/>	
 			</bool>
 				<property name="manage" value="manage.pyc"/>
 			<else>
@@ -106,7 +106,7 @@
 			</else>
 			</if>
 
-			<python dir="src">
+			<python dir="${basedir}">
 				<args>
 					<arg value="${manage}"/>	
 					<DjangoManageArgs/>
