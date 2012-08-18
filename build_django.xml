@@ -98,7 +98,7 @@
 			<local name="manage"/>
 			<if>
 			<bool>
-				<available file="manage.pyc"/>	
+				<available file="src/manage.pyc"/>	
 			</bool>
 				<property name="manage" value="manage.pyc"/>
 			<else>
@@ -106,7 +106,7 @@
 			</else>
 			</if>
 
-			<python dir="${basedir}">
+			<python dir="${basedir}/src">
 				<args>
 					<arg value="${manage}"/>	
 					<DjangoManageArgs/>
