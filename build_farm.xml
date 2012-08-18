@@ -20,6 +20,7 @@
 
     <macrodef name="get_properties">
         <sequential>
+        	<echo message="get properties"/>
         	<mkdir dir="tmp/properties"/>
         	<native2ascii encoding="utf8" src="." dest="tmp/properties" includes="*.properties" />
         	<eval_properties srcfile="tmp/properties/project.properties" dstfile="tmp/properties/active.properties">
@@ -85,5 +86,9 @@
             <property name="@{name}" value="${@{from}}" />
         </sequential>
     </macrodef>
+
+    <target name="get_properties">
+    	<get_properties/>
+    </target>
 
 </project>
