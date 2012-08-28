@@ -73,6 +73,13 @@
       <arg value="compilemessages"/>
     </exec>
     //--> 
+    		<!-- Collect static -->	
+    		<django_manage>
+    			<DjangoManageArgs>
+    				<arg value="collectstatic"/>
+    				<arg value="--noinput"/>
+    			</DjangoManageArgs>
+    		</django_manage>
 
 			<mkdir dir="@{target}/static" />
 			<echo message="Move collected static files into static directory" />
