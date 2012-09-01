@@ -18,14 +18,20 @@
         </classpath>
     </typedef>
 
-    <macrodef name="get_properties">
+    <macrodef name="compute_properties">
         <sequential>
-        	<echo message="get properties"/>
+        	<echo message="compute properties"/>
         	<mkdir dir="tmp/properties"/>
         	<native2ascii encoding="utf8" src="." dest="tmp/properties" includes="*.properties" />
         	<eval_properties srcfile="tmp/properties/project.properties" dstfile="tmp/properties/active.properties">
         		<setproperty name="basedir" value="${basedir}" />
         	</eval_properties>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="get_properties">
+        <sequential>
+        	<echo message="get properties"/>
         	<property file="tmp/properties/active.properties" />
         </sequential>
     </macrodef>
