@@ -10,7 +10,7 @@
 		<sequential>
             		<echo message="createdb --host @{host} --port @{port} --username @{user} @{database}"/>
             		<exec failonerror="true" executable="createdb">
-              			<arg line="--host @{host} --port @{port} --username @{user} @{database}"/>
+              			<arg line="-E UTF8 -T template0 --host @{host} --port @{port} --username @{user} @{database}"/>
           		</exec>
         	</sequential>
 	</macrodef>
