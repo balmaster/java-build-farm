@@ -39,31 +39,41 @@
         </sequential>
     </macrodef>
 	
-	<if> 
+	<macrodef name="get_python_properties">
+		<sequential>
+			<!-- чтобы если не заданы эти переменные имели пустое значение -->
+			<property name="env.PYTHONPATH" value=""/>
+			<property name="env.PYTHON_EGG_CACHE" value=""/>
+			<if> 
     		<bool> 	
       			<os family="windows"/>
     		</bool>
 	        <property name="virtualenv_dir" value="${basedir}\env"/>
     		<property name="virtualenv_dir_bin" value="${virtualenv_dir}\Scripts"/>
     		<property name="virtualenv.PYTHONPATH" value="${virtualenv_dir}\lib\site-packages:${env.PYTHONPATH}"/>
-		<property name="virtualenv.PYTHON_EGG_CACHE" value="${virtualenv_dir}\.python-eggs:${env.PYTHON_EGG_CACHE}"/>
-		<property name="virtualenv.PATH" value="${virtualenv_dir_bin};${env.PATH};${env.Path}"/>
-		<property name="virtualenv_pip" value="${virtualenv_dir_bin}\pip.exe"/>
+			<property name="virtualenv.PYTHON_EGG_CACHE" value="${virtualenv_dir}\.python-eggs:${env.PYTHON_EGG_CACHE}"/>
+			<property name="virtualenv.PATH" value="${virtualenv_dir_bin};${env.PATH};${env.Path}"/>
+			<property name="virtualenv_pip" value="${virtualenv_dir_bin}\pip.exe"/>
 
     		<else>
-    		        <property name="virtualenv_dir" value="${basedir}/env"/>
+   		        <property name="virtualenv_dir" value="${basedir}/env"/>
       			<property name="virtualenv_dir_bin" value="${virtualenv_dir}/bin"/>
 	    		<property name="virtualenv.PYTHONPATH" value="${virtualenv_dir}/lib/python${python_version}/site-packages:${env.PYTHONPATH}"/>
-			<property name="virtualenv.PYTHON_EGG_CACHE" value="${virtualenv_dir}/.python-eggs:${env.PYTHON_EGG_CACHE}"/>
-			<property name="virtualenv.PATH" value="${virtualenv_dir_bin}:${env.PATH}"/>
-			<property name="virtualenv_pip" value="${virtualenv_dir_bin}/pip"/>
+				<property name="virtualenv.PYTHON_EGG_CACHE" value="${virtualenv_dir}/.python-eggs:${env.PYTHON_EGG_CACHE}"/>
+				<property name="virtualenv.PATH" value="${virtualenv_dir_bin}:${env.PATH}"/>
+				<property name="virtualenv_pip" value="${virtualenv_dir_bin}/pip"/>
     		</else>
-  	</if>
+	  		</if>
+		</sequential>
+	</macrodef>
+
 
 	<macrodef name="virtualenv_create">
 		<attribute name="depfile" default="deps.txt"/>
 	        <sequential>
+	            
           		<echo message="Initialize virtual environment for this project."/>
+          		<get_python_properties/>
           		<exec executable="virtualenv" failonerror="true">
             			<arg line="${virtualenv_dir}"/>
           		</exec>
@@ -81,6 +91,7 @@
 		<attribute name="depfile" default="deps.txt"/>
 	        <sequential>
 			<echo message="Update dependencies in the virtual environment. Please wait..."/>
+			<get_python_properties/>
 			<exec executable="${virtualenv_pip}" failonerror="true">
                 		<arg line="install -r @{depfile}"/>
                                 <env key="PYTHONPATH" value="${virtualenv.PYTHONPATH}"/>
@@ -98,6 +109,7 @@
   	</target>
 
   	<target name="epydoc">
+  	        <get_python_properties/>
 	    	<echo message="Generate project documentation"/>
 	    	<delete dir="${basedir}/epydoc" includeemptydirs="true" quiet="yes"/>
     		<exec dir="${basedir}/src" failonerror="true" executable="epydoc" error="/dev/null" osfamily="unix">
@@ -111,26 +123,27 @@
   		<attribute name="output" default=""/>
 		<element name="args"/>
 		<sequential>
-		<!--<echo message="${virtualenv.PYTHONPATH}"/>-->
-		<if>
-			<bool>
-				<equals arg1="@{output}" arg2="" trim="true"/>
-			</bool>
-		<exec executable="${virtualenv_dir_bin}/python" failonerror="true" searchpath="true" dir="@{dir}" >
-			<args/>
-			<env key="PYTHONPATH" value="${virtualenv.PYTHONPATH}"/>
-			<env key="VIRTUAL_ENV" value="${virtualenv_dir}"/>
-			<env key="PATH" path="${virtualenv.PATH}"/>
-		</exec>
-		<else>
-		<exec executable="${virtualenv_dir_bin}/python" failonerror="true" searchpath="true" dir="@{dir}" output="@{output}" error="python_error">
-			<args/>
-			<env key="PYTHONPATH" value="${virtualenv.PYTHONPATH}"/>
-			<env key="VIRTUAL_ENV" value="${virtualenv_dir}"/>
-			<env key="PATH" path="${virtualenv.PATH}"/>
-		</exec>
-		</else>
-		</if>
+			<get_python_properties/>
+			<!--<echo message="${virtualenv.PYTHONPATH}"/>-->
+			<if>
+				<bool>
+					<equals arg1="@{output}" arg2="" trim="true"/>
+				</bool>
+			<exec executable="${virtualenv_dir_bin}/python" failonerror="true" searchpath="true" dir="@{dir}" >
+				<args/>
+				<env key="PYTHONPATH" value="${virtualenv.PYTHONPATH}"/>
+				<env key="VIRTUAL_ENV" value="${virtualenv_dir}"/>
+				<env key="PATH" path="${virtualenv.PATH}"/>
+			</exec>
+			<else>
+				<exec executable="${virtualenv_dir_bin}/python" failonerror="true" searchpath="true" dir="@{dir}" output="@{output}" error="python_error">
+					<args/>
+					<env key="PYTHONPATH" value="${virtualenv.PYTHONPATH}"/>
+					<env key="VIRTUAL_ENV" value="${virtualenv_dir}"/>
+					<env key="PATH" path="${virtualenv.PATH}"/>
+				</exec>
+			</else>
+			</if>
 		</sequential>
   	</macrodef>
 
