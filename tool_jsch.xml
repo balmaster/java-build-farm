@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+
+<project name="tool_jsch">
+
+	<macrodef name="gen_key">
+		<attribute name="dir" />
+		<sequential>
+			<mkdir dir="@{dir}"/>
+			<java classname="build_farm.jsch.KeyGen" fork="true">
+         		<arg value="rsa"/>
+         		<arg value="@{dir}/id_rsa"/>
+         		<arg value="build_farm_key"/>
+  		        <classpath>
+        		    <pathelement location="${BUILD_FARM_HOME}/tasks-1.0.0.jar" />
+		            <pathelement location="${BUILD_FARM_HOME}/jsch-0.1.49.jar" />
+        		</classpath>
+	        </java>
+		</sequential>
+	</macrodef>
+	
+	<target name="gen_key">
+		<gen_key dir="key"/>
+	</target> 
+</project>
+
