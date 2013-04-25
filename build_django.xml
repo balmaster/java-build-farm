@@ -62,6 +62,7 @@
 					<exclude name="src/**/*.cmd" />
 					<exclude name="src/**/*.po" />
 					<exclude name="src/**/*.pyc" />
+    				<exclude name="src/*/media/uploads/**"/>
 					<include name="deps.txt" />
 				</fileset>
 
