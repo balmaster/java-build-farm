@@ -29,6 +29,20 @@
         	</sequential>
 	</macrodef>
 
+	<macrodef name="db_pgsql_dump_database">
+		<attribute name="host"/>
+		<attribute name="port" />
+		<attribute name="user"/>
+		<attribute name="database"/>
+		<attribute name="dumpfile"/>
+		<sequential>
+            		<echo message="pg_dump --host @{host} --port @{port} --username @{user} @{database} > @{dumpfile}"/>
+            		<exec failonerror="true" executable="pg_dump" output="@{dumpfile}" error="@{dumpfile}.log">
+              			<arg line="--host @{host} --port @{port} --username @{user} @{database}"/>
+          		</exec>
+        	</sequential>
+	</macrodef>
+
 	<macrodef name="psql">
 		<attribute name="host"/>
 		<attribute name="port" />
