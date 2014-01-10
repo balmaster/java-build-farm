@@ -82,7 +82,7 @@
 	        <sequential>
 			<echo message="Update dependencies in the virtual environment. Please wait..."/>
 			<exec executable="${virtualenv_pip}" failonerror="true">
-                		<arg line="install -E ${virtualenv_dir} -r @{depfile}"/>
+                		<arg line="install -r @{depfile}"/>
                                 <env key="PYTHONPATH" value="${virtualenv.PYTHONPATH}"/>
 		        </exec>
 	        </sequential>
