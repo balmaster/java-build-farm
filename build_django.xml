@@ -28,7 +28,7 @@
 			<copy_with_replace target="@{target}" params="tmp/properties/active.properties">
 				<source>
 					<fileset dir="template">
-						<include name="src/settings.py"/>
+						<include name="**/settings.py"/>
 					</fileset>
 				</source>
 			</copy_with_replace>
@@ -84,7 +84,8 @@
 			<delete>
 				<fileset dir="@{target}">
 					<include name="src/**/*.py" />
-					<exclude name="src/settings.py" />
+					<exclude name="src/**/settings.py" />
+                    <exclude name="src/**/manage.py" />
 					<exclude name="src/**/migrations/*.py" />
 					<exclude name="src/**/commands/*.py" />
 				</fileset>
@@ -93,22 +94,12 @@
 	</macrodef>
 
 	<macrodef name="django_manage">
+        <attribute name="path" default="src"/>
 		<element name="DjangoManageArgs"/>
 		<sequential>
-			<local name="manage"/>
-			<if>
-			<bool>
-				<available file="src/manage.pyc"/>	
-			</bool>
-				<property name="manage" value="manage.pyc"/>
-			<else>
-				<property name="manage" value="manage.py"/>
-			</else>
-			</if>
-
-			<python dir="src">
+			<python dir="@{path}">
 				<args>
-					<arg value="${manage}"/>	
+					<arg value="manage.py"/>
 					<DjangoManageArgs/>
 				</args>
 			</python>
