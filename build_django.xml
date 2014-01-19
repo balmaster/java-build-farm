@@ -28,7 +28,7 @@
 			<copy_with_replace target="@{target}" params="tmp/properties/active.properties">
 				<source>
 					<fileset dir="template">
-						<include name="**/settings.py"/>
+						<include name="**/*.py"/>
 					</fileset>
 				</source>
 			</copy_with_replace>
