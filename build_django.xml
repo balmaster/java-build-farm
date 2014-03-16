@@ -13,25 +13,18 @@
 			<copy_with_replace target="@{target}" params="tmp/properties/active.properties">
 				<source>
 					<fileset dir="${BUILD_FARM_HOME}/template">
-						<include name="django/**/**"/>
+						<include name="**/**"/>
 					</fileset>
 				</source>
 			</copy_with_replace>
 			<copy_with_replace target="@{target}" params="tmp/properties/active.properties">
 				<source>
 					<fileset dir="template">
-						<include name="django/**/**"/>
+						<include name="**/**"/>
 					</fileset>
 				</source>
 			</copy_with_replace>
-
-			<copy_with_replace target="@{target}" params="tmp/properties/active.properties">
-				<source>
-					<fileset dir="template">
-						<include name="src/**/*.py"/>
-					</fileset>
-				</source>
-			</copy_with_replace>
+            <chmod dir="@{target}/bin" perm="ug+rx" includes="*.sh"/>
 		</sequential>
 	</macrodef>
 
